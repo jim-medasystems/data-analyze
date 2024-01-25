@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Alert from '@mui/material/Alert';
+import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
 import Snackbar from '@mui/material/Snackbar';
@@ -20,6 +21,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   setIsLoading,
 }) => {
   const [file, setFile] = useState<File | null>(null);
+  const [filename, setFilename] = useState<string>('');
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [status, setStatus] = useState<'success' | 'fail' | null>(null);
@@ -59,6 +61,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     if (e.target.files) {
       setStatus(null);
       setFile(e.target.files[0]);
+      setFilename(e.target.files[0].name);
     }
   };
 
@@ -93,6 +96,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       } catch (error) {
         console.error(error);
         setStatus('fail');
+        setFilename('');
       } finally {
         setIsLoading(false);
       }
@@ -103,7 +107,11 @@ const FileUploader: React.FC<FileUploaderProps> = ({
     <>
       <Container style={{ marginTop: '10px' }}>
         <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
-          {!isDataLoaded && <div>Click here to start 👉</div>}
+          {isDataLoaded ? (
+            <Chip label={`Loaded: ${filename}`} color='success' />
+          ) : (
+            <Chip label='Start here 👉' color='primary' variant='outlined' />
+          )}
           <input
             id='file'
             type='file'

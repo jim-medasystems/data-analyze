@@ -1,125 +1,31 @@
 import { Fragment, ReactNode, useEffect, useState } from 'react';
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  Modal,
-  Paper,
-  Skeleton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-} from '@mui/material';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import { Bar, Line, Scatter } from 'react-chartjs-2';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Container from '@mui/material/Container';
+import Drawer from '@mui/material/Drawer';
+import Modal from '@mui/material/Modal';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Typography from '@mui/material/Typography';
+import { ChartData } from 'chart.js';
+import { BACKEND_URL, CustomSkeleton } from '../common';
 import {
-  Chart,
-  ChartData,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  LineController,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-import { BACKEND_URL } from '../common';
+  GraphCard,
+  initialBarChartData,
+  initialLineChartData,
+  prepareBarChartData,
+  prepareLineChartData,
+  preparePointChartData,
+  ScatterData,
+} from './graph';
 
 const GENERIC_WAIT_MESSAGE = 'Waiting for explanation...';
-
-Chart.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  LineController,
-  Title,
-  Tooltip,
-  Legend,
-);
-
-type DataRow = Record<string, string | number>;
-
-interface ScatterData {
-  datasets: {
-    label: string;
-    data: { x: number; y: number }[];
-    backgroundColor: string;
-    borderColor: string;
-  }[];
-}
-
-const shuffleArray = (array: any[]) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-  return array;
-};
-
-const NUM_DATA_POINTS = 35;
-
-const prepareBarChartData = (data: DataRow[], column1: string, column2: string) => {
-  const randomData = shuffleArray([...data]).slice(0, NUM_DATA_POINTS);
-  const labels = randomData.map((row) => row[column1].toString());
-  const values = randomData.map((row) => Number(row[column2]));
-
-  return {
-    labels,
-    datasets: [
-      {
-        label: `${column2} by ${column1}`,
-        data: values,
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        borderColor: 'rgba(75, 192, 192, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
-};
-
-const prepareLineChartData = (data: DataRow[], column: string) => {
-  const randomData = shuffleArray([...data]).slice(0, NUM_DATA_POINTS);
-  return {
-    labels: randomData.map((row) => row[column].toString()),
-    datasets: [
-      {
-        label: column,
-        data: randomData.map((row) => Number(row[column])),
-        backgroundColor: 'rgba(153, 102, 255, 0.2)',
-        borderColor: 'rgba(153, 102, 255, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
-};
-
-const preparePointChartData = (data: DataRow[], column1: string, column2: string) => {
-  const randomData = shuffleArray([...data]).slice(0, NUM_DATA_POINTS);
-
-  return {
-    datasets: [
-      {
-        label: `${column1} vs ${column2}`,
-        data: randomData.map((row) => ({
-          x: Number(row[column1]),
-          y: Number(row[column2]),
-        })),
-        backgroundColor: 'rgba(255, 99, 132, 1)',
-        borderColor: 'rgba(255, 99, 132, 1)',
-      },
-    ],
-  };
-};
 
 type DataOutputProps = {
   data: any[] | null;
@@ -128,44 +34,16 @@ type DataOutputProps = {
 };
 
 const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoading }) => {
-  const [openModal, setOpenModal] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [openSmallModal, setOpenSmallModal] = useState(false);
   const [graphExplanation, setGraphExplanation] = useState('');
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [wsMessages, setWsMessages] = useState<string[]>([]);
 
-  const initialBarChartData: ChartData<'bar', number[], string> = {
-    labels: [],
-    datasets: [
-      {
-        label: '',
-        data: [],
-        backgroundColor: 'rgba(0, 123, 255, 0.5)',
-        borderColor: 'rgba(0, 123, 255, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
-
   const [barChartData, setBarChartData] =
     useState<ChartData<'bar', number[], string>>(initialBarChartData);
-
-  const initialLineChartData: ChartData<'line', number[], string> = {
-    labels: [],
-    datasets: [
-      {
-        label: '',
-        data: [],
-        backgroundColor: 'rgba(0, 123, 255, 0.5)',
-        borderColor: 'rgba(0, 123, 255, 1)',
-        borderWidth: 1,
-      },
-    ],
-  };
-
   const [lineChartData, setLineChartData] =
     useState<ChartData<'line', number[], string>>(initialLineChartData);
-
   const [pointChartData, setPointChartData] = useState<ScatterData>({ datasets: [] });
 
   useEffect(() => {
@@ -197,7 +75,7 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
   }, [data]);
 
   useEffect(() => {
-    if (openModal) {
+    if (drawerOpen) {
       const newWs = new WebSocket(`ws://${BACKEND_URL}/ws`);
       newWs.onopen = () => {
         if (data) {
@@ -221,20 +99,14 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
     return () => {
       ws?.close();
     };
-  }, [openModal, data]);
+  }, [drawerOpen, data]);
 
   if (isLoading) {
     return (
       <Container style={{ marginTop: 20 }}>
-        <Skeleton variant='rectangular' width='100%' height={400} style={{ borderRadius: '8px' }} />
+        <CustomSkeleton width='100%' height={400} />
         <Container style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
-          <Skeleton
-            variant='rectangular'
-            width={200}
-            height={40}
-            style={{ borderRadius: '8px' }}
-            animation='wave'
-          />
+          <CustomSkeleton width='200px' height={40} />
         </Container>
         <Container
           style={{
@@ -244,26 +116,9 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
             flexWrap: 'wrap',
           }}
         >
-          <Skeleton
-            variant='rectangular'
-            width='30%'
-            height={300}
-            style={{ borderRadius: '8px' }}
-            animation='wave'
-          />
-          <Skeleton
-            variant='rectangular'
-            width='30%'
-            height={300}
-            style={{ borderRadius: '8px' }}
-          />
-          <Skeleton
-            variant='rectangular'
-            width='30%'
-            height={300}
-            style={{ borderRadius: '8px' }}
-            animation='wave'
-          />
+          {Array.from({ length: 3 }).map((_, i) => (
+            <CustomSkeleton key={i} width='30%' height={300} />
+          ))}
         </Container>
       </Container>
     );
@@ -271,8 +126,8 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
     return <Container>There's no data to display 😔</Container>;
   }
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
+  const handleCloseDrawer = () => {
+    setDrawerOpen(false);
   };
 
   const handleExplainGraph = (graphType: string) => {
@@ -285,8 +140,8 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
 
   const handleCloseExplainGraph = () => setOpenSmallModal(false);
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
+  const handleOpenDrawer = () => {
+    setDrawerOpen(true);
   };
 
   const renderTableRows = (data: any[]) => {
@@ -326,9 +181,9 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
       <Container style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
         <Button
           variant='contained'
-          color='primary'
+          color='warning'
           startIcon={<AutoAwesomeIcon />}
-          onClick={handleOpenModal}
+          onClick={handleOpenDrawer}
         >
           Explain this data
         </Button>
@@ -337,74 +192,16 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
       <Container
         style={{ display: 'flex', justifyContent: 'space-around', marginTop: 20, flexWrap: 'wrap' }}
       >
-        {/* Bar Graph Card */}
-        <Card style={{ flex: 1, margin: '10px', maxWidth: '30%' }}>
-          <CardContent style={{ height: '300px' }}>
-            <Bar data={barChartData} options={{ maintainAspectRatio: false }} />
-          </CardContent>
-          <Box display='flex' justifyContent='center' marginBottom='10px'>
-            <Button
-              size='small'
-              color='primary'
-              startIcon={<AutoAwesomeIcon />}
-              onClick={() => handleExplainGraph('Bar')}
-            >
-              Explain
-            </Button>
-          </Box>
-        </Card>
-
-        {/* Line Graph Card */}
-        <Card style={{ flex: 1, margin: '10px', maxWidth: '30%' }}>
-          <CardContent style={{ height: '300px' }}>
-            <Line data={lineChartData} options={{ maintainAspectRatio: false }} />
-          </CardContent>
-          <Box display='flex' justifyContent='center' marginBottom='10px'>
-            <Button
-              size='small'
-              color='primary'
-              startIcon={<AutoAwesomeIcon />}
-              onClick={() => handleExplainGraph('Line')}
-            >
-              Explain
-            </Button>
-          </Box>
-        </Card>
-
-        {/* Point Graph Card */}
-        <Card style={{ flex: 1, margin: '10px', maxWidth: '30%' }}>
-          <CardContent style={{ height: '300px' }}>
-            <Scatter data={pointChartData} options={{ maintainAspectRatio: false }} />
-          </CardContent>
-          <Box display='flex' justifyContent='center' marginBottom='10px'>
-            <Button
-              size='small'
-              color='primary'
-              startIcon={<AutoAwesomeIcon />}
-              onClick={() => handleExplainGraph('Point')}
-            >
-              Explain
-            </Button>
-          </Box>
-        </Card>
+        <GraphCard graphType='Bar' graphData={barChartData} onExplain={handleExplainGraph} />
+        <GraphCard graphType='Line' graphData={lineChartData} onExplain={handleExplainGraph} />
+        <GraphCard graphType='Scatter' graphData={pointChartData} onExplain={handleExplainGraph} />
       </Container>
 
-      <Modal
-        open={openModal}
-        onClose={handleCloseModal}
-        aria-labelledby='modal-title'
-        aria-describedby='modal-description'
-      >
+      <Drawer anchor='top' open={drawerOpen} onClose={handleCloseDrawer}>
         <Box
           style={{
-            position: 'absolute',
-            top: '30%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '80%',
-            backgroundColor: 'white',
+            width: '100%',
             padding: '20px 30px',
-            borderRadius: 6,
           }}
         >
           <Typography>
@@ -419,12 +216,12 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
               ))}
           </Typography>
           <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
-            <Button onClick={handleCloseModal} color='primary'>
+            <Button onClick={handleCloseDrawer} color='primary'>
               OK
             </Button>
           </div>
         </Box>
-      </Modal>
+      </Drawer>
 
       <Modal open={openSmallModal} onClose={handleCloseExplainGraph}>
         <Box
