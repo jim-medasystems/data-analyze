@@ -121,7 +121,11 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
       </Container>
     );
   } else if (!data || data.length === 0) {
-    return <Container>There's no data to display 😔</Container>;
+    return (
+      <Container style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
+        <Typography variant='h6'>There's no data to display 😔</Typography>
+      </Container>
+    );
   }
 
   const handleCloseDrawer = () => {
