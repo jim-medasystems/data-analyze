@@ -1,30 +1,22 @@
-# React + TypeScript + Vite
+# Data Analysis tool
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a very generic data analysis tool for the latest hackathon (Jan 26, 2024)
 
-Currently, two official plugins are available:
+## How to run
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+This is a dev only environment for demo purposes.
 
-## Expanding the ESLint configuration
+To run the backend (FastAPI):
+'''
+cd backend
+pipenv install
+pipenv run uvicorn app:app --reload
+'''
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+To run the frontend (React+TypeScript+Vite):
+'''
+cd frontend
+npm run dev
+'''
 
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
-```
-
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+You should now be able to access the demo via: http://localhost:5173
