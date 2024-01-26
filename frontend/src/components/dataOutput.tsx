@@ -23,6 +23,7 @@ import {
   preparePointChartData,
   ScatterData,
 } from './graph';
+import { v4 as uuidv4 } from 'uuid';
 
 const GENERIC_WAIT_MESSAGE = 'Waiting for explanation...';
 
@@ -113,8 +114,8 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
             flexWrap: 'wrap',
           }}
         >
-          {Array.from({ length: 3 }).map((_, i) => (
-            <CustomSkeleton key={i} width='30%' height={300} />
+          {Array.from({ length: 3 }).map(() => (
+            <CustomSkeleton key={uuidv4()} width='30%' height={300} />
           ))}
         </Container>
       </Container>
@@ -132,10 +133,10 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
   };
 
   const renderTableRows = (data: any[]) => {
-    return data.slice(0, 100).map((row, rowIndex) => (
-      <TableRow key={`row-${rowIndex}`}>
-        {Object.entries(row).map(([key, value], cellIndex) => (
-          <TableCell key={`${key}-${cellIndex}`}>{value as ReactNode}</TableCell>
+    return data.slice(0, 100).map((row) => (
+      <TableRow key={uuidv4()}>
+        {Object.entries(row).map(([_, value]) => (
+          <TableCell key={uuidv4()}>{value as ReactNode}</TableCell>
         ))}
       </TableRow>
     ));
@@ -195,8 +196,8 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
             {wsMessages
               .join('')
               .split('\n')
-              .map((line, index) => (
-                <Fragment key={index}>
+              .map((line) => (
+                <Fragment key={uuidv4()}>
                   {line}
                   <br />
                 </Fragment>
