@@ -46,11 +46,15 @@ export const GraphCard = ({ graphType, graphData }: { graphType: string; graphDa
       <CardContent style={{ height: '300px' }}>
         <GraphComponent data={graphData} options={{ maintainAspectRatio: false }} />
       </CardContent>
-      <Box display='flex' justifyContent='center' marginBottom='10px' px={3} paddingBottom={2}>
+      <Box display='flex' justifyContent='center' marginBottom='10px' px={2} paddingBottom={1}>
         <Typography style={{ fontSize: '14px' }}>
-          <Box display='flex' alignItems='center'>
+          <Box
+            display='flex'
+            alignItems='top'
+            style={{ background: '#fff6e3', borderRadius: '15px', padding: '15px' }}
+          >
             <AutoAwesomeIcon style={{ marginRight: '8px', color: warning }} />
-            <span>
+            <Box>
               This is a {graphType} graph.
               <br />
               <br />
@@ -60,7 +64,7 @@ export const GraphCard = ({ graphType, graphData }: { graphType: string; graphDa
               <br />
               Vivamus tincidunt gravida tortor ut ornare. Pellentesque gravida risus semper massa
               congue ullamcorper.
-            </span>
+            </Box>
           </Box>
         </Typography>
       </Box>
