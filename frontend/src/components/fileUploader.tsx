@@ -4,10 +4,15 @@ import Alert from '@mui/material/Alert';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
+import Slide, { SlideProps } from '@mui/material/Slide';
 import Snackbar from '@mui/material/Snackbar';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import { BACKEND_URL } from '../common';
 import { CombinedData } from '../main';
+
+function SlideTransition(props: Readonly<SlideProps>) {
+  return <Slide {...props} direction='down' />;
+}
 
 type FileUploaderProps = {
   onDataLoaded: (data: CombinedData) => void;
@@ -133,8 +138,13 @@ const FileUploader: React.FC<FileUploaderProps> = ({
         open={openSnackbar}
         autoHideDuration={2000}
         onClose={handleCloseSnackbar}
+        TransitionComponent={SlideTransition}
       >
-        <Alert onClose={handleCloseSnackbar} severity={status === 'success' ? 'success' : 'error'}>
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={status === 'success' ? 'success' : 'error'}
+          style={{ borderRadius: '10px' }}
+        >
           {snackbarMessage}
         </Alert>
       </Snackbar>
