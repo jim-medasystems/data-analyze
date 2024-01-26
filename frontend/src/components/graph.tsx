@@ -1,4 +1,5 @@
-import { Box, Button, Card, CardContent } from '@mui/material';
+import { Box, Card, CardContent, Typography } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { Bar, Line, Scatter } from 'react-chartjs-2';
 import {
@@ -35,31 +36,33 @@ const GraphComponents = {
   Scatter: Scatter,
 };
 
-export const GraphCard = ({
-  graphType,
-  graphData,
-  onExplain,
-}: {
-  graphType: string;
-  graphData: any;
-  onExplain: (graphType: string) => void;
-}) => {
+export const GraphCard = ({ graphType, graphData }: { graphType: string; graphData: any }) => {
   const GraphComponent = GraphComponents[graphType as keyof typeof GraphComponents];
+  const theme = useTheme();
+  const warning = theme.palette.warning.main;
 
   return (
     <Card style={{ flex: 1, margin: '10px', maxWidth: '30%' }}>
       <CardContent style={{ height: '300px' }}>
         <GraphComponent data={graphData} options={{ maintainAspectRatio: false }} />
       </CardContent>
-      <Box display='flex' justifyContent='center' marginBottom='10px'>
-        <Button
-          size='small'
-          color='warning'
-          startIcon={<AutoAwesomeIcon />}
-          onClick={() => onExplain(graphType)}
-        >
-          Explain
-        </Button>
+      <Box display='flex' justifyContent='center' marginBottom='10px' px={3} paddingBottom={2}>
+        <Typography style={{ fontSize: '14px' }}>
+          <Box display='flex' alignItems='center'>
+            <AutoAwesomeIcon style={{ marginRight: '8px', color: warning }} />
+            <span>
+              This is a {graphType} graph.
+              <br />
+              <br />
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur et eros vitae nisi
+              viverra viverra sit amet non nisl.
+              <br />
+              <br />
+              Vivamus tincidunt gravida tortor ut ornare. Pellentesque gravida risus semper massa
+              congue ullamcorper.
+            </span>
+          </Box>
+        </Typography>
       </Box>
     </Card>
   );

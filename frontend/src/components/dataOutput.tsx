@@ -4,7 +4,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import Drawer from '@mui/material/Drawer';
-import Modal from '@mui/material/Modal';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -35,8 +34,6 @@ type DataOutputProps = {
 
 const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoading }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [openSmallModal, setOpenSmallModal] = useState(false);
-  const [graphExplanation, setGraphExplanation] = useState('');
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [wsMessages, setWsMessages] = useState<string[]>([]);
 
@@ -130,16 +127,6 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
     setDrawerOpen(false);
   };
 
-  const handleExplainGraph = (graphType: string) => {
-    setGraphExplanation(
-      `GPT explanation here. This is a ${graphType} graph. \
-      It shows ${graphType.toLowerCase()}s of the data.`,
-    );
-    setOpenSmallModal(true);
-  };
-
-  const handleCloseExplainGraph = () => setOpenSmallModal(false);
-
   const handleOpenDrawer = () => {
     setDrawerOpen(true);
   };
@@ -192,9 +179,9 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
       <Container
         style={{ display: 'flex', justifyContent: 'space-around', marginTop: 20, flexWrap: 'wrap' }}
       >
-        <GraphCard graphType='Bar' graphData={barChartData} onExplain={handleExplainGraph} />
-        <GraphCard graphType='Line' graphData={lineChartData} onExplain={handleExplainGraph} />
-        <GraphCard graphType='Scatter' graphData={pointChartData} onExplain={handleExplainGraph} />
+        <GraphCard graphType='Bar' graphData={barChartData} />
+        <GraphCard graphType='Line' graphData={lineChartData} />
+        <GraphCard graphType='Scatter' graphData={pointChartData} />
       </Container>
 
       <Drawer anchor='top' open={drawerOpen} onClose={handleCloseDrawer}>
@@ -222,28 +209,6 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
           </div>
         </Box>
       </Drawer>
-
-      <Modal open={openSmallModal} onClose={handleCloseExplainGraph}>
-        <Box
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            backgroundColor: 'white',
-            padding: '20px',
-            borderRadius: '4px',
-          }}
-        >
-          <Typography>{graphExplanation}</Typography>
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
-            <Button onClick={handleCloseExplainGraph} color='primary'>
-              OK
-            </Button>
-          </div>
-        </Box>
-      </Modal>
     </>
   );
 };
