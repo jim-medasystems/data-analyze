@@ -1,6 +1,8 @@
 # Data Analysis tool
 
-This is a very generic data analysis tool for the latest hackathon (Jan 26, 2024)
+This is a very generic data analysis tool for the latest hackathon (Jan 26, 2024).
+
+Data was retrieved from kaggle (kaggle.com)
 
 ## How to run
 
