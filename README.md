@@ -18,6 +18,7 @@ To run the frontend (React+TypeScript+Vite):
 
 ```
 cd frontend
+npm install
 npm run dev
 ```
 
