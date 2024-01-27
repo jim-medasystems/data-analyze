@@ -1,6 +1,6 @@
 import os
 import json
-from fastapi import FastAPI, File, UploadFile, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, File, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from gpt_analysis import gpt_analyze_data
 from pathlib import Path
@@ -56,8 +56,8 @@ async def websocket_endpoint(websocket: WebSocket):
         await websocket.send_text(f"Error: {str(e)}")
 
 @app.get('/')
-async def hello():
-    return "hello"
+async def root():
+    raise HTTPException(status_code=404, detail="Not Found")
 
 if __name__ == '__main__':
     import uvicorn
