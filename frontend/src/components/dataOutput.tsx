@@ -24,6 +24,7 @@ import {
   ScatterData,
 } from './graph';
 import { v4 as uuidv4 } from 'uuid';
+import md5 from 'md5';
 
 const GENERIC_WAIT_MESSAGE = 'Waiting for explanation...';
 
@@ -37,6 +38,15 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [wsMessages, setWsMessages] = useState<string[]>([]);
+  const [wsFlag, setWsFlag] = useState(false);
+  const [dataBuffer, setDataBuffer] = useState<string | null>(null);
+
+  const dataHash = md5(JSON.stringify(data));
+
+  if (data && data.length > 0 && dataHash !== dataBuffer) {
+    setDataBuffer(dataHash);
+    setWsFlag(false);
+  }
 
   const [barChartData, setBarChartData] =
     useState<ChartData<'bar', number[], string>>(initialBarChartData);
@@ -74,30 +84,37 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
 
   useEffect(() => {
     if (drawerOpen) {
-      const newWs = new WebSocket(`${import.meta.env.VITE_BACKEND_URL_WS}`);
-      newWs.onopen = () => {
-        if (data) {
-          newWs.send(JSON.stringify(data));
-        }
-      };
-      newWs.onmessage = (event) => {
-        setWsMessages((prevMessages) => {
-          // Check if the default message is still there
-          if (prevMessages.length === 1 && prevMessages[0] === GENERIC_WAIT_MESSAGE) {
-            return [event.data];
-          } else {
-            return [...prevMessages, event.data];
+      if (wsFlag) {
+        return;
+      } else {
+        const newWs = new WebSocket(`${import.meta.env.VITE_BACKEND_URL_WS}`);
+        newWs.onopen = () => {
+          if (data) {
+            newWs.send(JSON.stringify(data));
           }
-        });
-      };
-      setWs(newWs);
+        };
+        newWs.onmessage = (event) => {
+          setWsMessages((prevMessages) => {
+            // Check if the default message is still there
+            if (prevMessages.length === 1 && prevMessages[0] === GENERIC_WAIT_MESSAGE) {
+              return [event.data];
+            } else {
+              return [...prevMessages, event.data];
+            }
+          });
+        };
+        newWs.onclose = () => {
+          setWsFlag(true);
+        };
+        setWs(newWs);
+      }
     } else {
       ws?.close();
     }
     return () => {
       ws?.close();
     };
-  }, [drawerOpen, data]);
+  }, [drawerOpen, data, wsFlag]);
 
   if (isLoading) {
     return (
