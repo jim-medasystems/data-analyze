@@ -19,7 +19,7 @@ app.add_middleware(
 )
 
 # Directory where the files will be uploaded
-UPLOAD_FOLDER = Path('../uploads')
+UPLOAD_FOLDER = Path(os.getenv("UPLOAD_FOLDER", "/tmp/uploads"))
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 ALLOWED_EXTENSIONS = {'csv'}
 
