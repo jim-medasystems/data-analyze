@@ -57,7 +57,7 @@ async def websocket_endpoint(websocket: WebSocket):
 
 @app.get('/')
 async def root():
-    raise HTTPException(status_code=404, detail="Not Found")
+    raise HTTPException(status_code=404)
 
 if __name__ == '__main__':
     import uvicorn
