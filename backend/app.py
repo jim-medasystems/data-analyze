@@ -55,9 +55,6 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception as e:
         await websocket.send_text(f"Error: {str(e)}")
 
-
-
-
 @app.get('/')
 async def hello():
     return "hello"
