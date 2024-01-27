@@ -13,7 +13,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { ChartData } from 'chart.js';
-import { BACKEND_URL, CustomSkeleton } from '../common';
+import { CustomSkeleton } from '../common';
 import {
   GraphCard,
   initialBarChartData,
@@ -74,7 +74,7 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
 
   useEffect(() => {
     if (drawerOpen) {
-      const newWs = new WebSocket(`ws://${BACKEND_URL}/ws`);
+      const newWs = new WebSocket(`${process.env.REACT_APP_BACKEND_URL_WS}`);
       newWs.onopen = () => {
         if (data) {
           newWs.send(JSON.stringify(data));

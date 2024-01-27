@@ -7,7 +7,6 @@ import IconButton from '@mui/material/IconButton';
 import Slide, { SlideProps } from '@mui/material/Slide';
 import Snackbar from '@mui/material/Snackbar';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
-import { BACKEND_URL } from '../common';
 import { CombinedData } from '../main';
 
 function SlideTransition(props: Readonly<SlideProps>) {
@@ -83,7 +82,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       formData.append('file', file);
 
       try {
-        const result = await fetch(`http://${BACKEND_URL}/upload`, {
+        const result = await fetch(`${process.env.REACT_APP_BACKEND_URL_UPLOAD}`, {
           method: 'POST',
           body: formData,
         });

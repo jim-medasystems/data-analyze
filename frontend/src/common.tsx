@@ -1,9 +1,6 @@
 import { FC } from 'react';
 import Skeleton from '@mui/material/Skeleton';
 
-// for local environments, it is usually localhost:8000 by default
-export const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-
 interface CustomSkeletonProps {
   width: string;
   height: number;
