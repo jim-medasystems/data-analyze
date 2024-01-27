@@ -13,14 +13,13 @@ A sample of the `backend/.env` file should look like this:
 ```
 OPENAI_API_KEY="your-openai-api-key-here"
 UPLOAD_FOLDER="uploads" # optional, but can be specified if needed
-
 ```
 
 A sample of the `frontend/.env` file should look like this:
 
 ```
-REACT_APP_BACKEND_URL_UPLOAD="http://localhost:8000/upload"
-REACT_APP_BACKEND_URL_WS="ws://localhost:8000/ws"
+VITE_BACKEND_URL_UPLOAD=http://localhost:8000/upload
+VITE_BACKEND_URL_WS=ws://localhost:8000/ws
 ```
 
 ## How to run

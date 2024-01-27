@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import Alert from '@mui/material/Alert';
+import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
@@ -82,7 +83,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
       formData.append('file', file);
 
       try {
-        const result = await fetch(`${process.env.REACT_APP_BACKEND_URL_UPLOAD}`, {
+        const result = await fetch(`${import.meta.env.VITE_BACKEND_URL_UPLOAD}`, {
           method: 'POST',
           body: formData,
         });
@@ -110,7 +111,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   return (
     <>
       <Container style={{ marginTop: '10px' }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+        <Box style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
           {isDataLoaded ? (
             <Chip label={`Loaded: ${filename}`} color='success' />
           ) : (
@@ -129,7 +130,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({
           <IconButton aria-label='user-profile' component='span'>
             <AccountCircle />
           </IconButton>
-        </div>
+        </Box>
       </Container>
 
       <Snackbar

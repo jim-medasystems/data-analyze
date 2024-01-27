@@ -47,7 +47,7 @@ export const GraphCard = ({ graphType, graphData }: { graphType: string; graphDa
         <GraphComponent data={graphData} options={{ maintainAspectRatio: false }} />
       </CardContent>
       <Box display='flex' justifyContent='center' marginBottom='10px' px={2} paddingBottom={1}>
-        <Typography style={{ fontSize: '14px' }}>
+        <Typography style={{ fontSize: '14px' }} component='div'>
           <Box
             display='flex'
             alignItems='top'

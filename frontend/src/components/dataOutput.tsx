@@ -74,7 +74,7 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
 
   useEffect(() => {
     if (drawerOpen) {
-      const newWs = new WebSocket(`${process.env.REACT_APP_BACKEND_URL_WS}`);
+      const newWs = new WebSocket(`${import.meta.env.VITE_BACKEND_URL_WS}`);
       newWs.onopen = () => {
         if (data) {
           newWs.send(JSON.stringify(data));
@@ -207,11 +207,11 @@ const DataOutput: React.FC<DataOutputProps> = ({ data, columnSuggestions, isLoad
                 </Fragment>
               ))}
           </Typography>
-          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
+          <Box style={{ display: 'flex', justifyContent: 'center', marginTop: 20 }}>
             <Button onClick={handleCloseDrawer} color='primary'>
               OK
             </Button>
-          </div>
+          </Box>
         </Box>
       </Drawer>
     </>
